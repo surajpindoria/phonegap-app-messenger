@@ -1,5 +1,5 @@
 <template>
-  <f7-page>
+  <f7-page id="messageWindow">
     <f7-navbar sliding title="PhoneGap Messenger"></f7-navbar>
     <f7-block-title>Your username is: {{ this.username }}</f7-block-title>
 
@@ -32,6 +32,21 @@
       };
     },
     mounted () {
+      // prevent iOS window from scrolling when keyboard appears
+      if (window.isiOS) {
+        cordova.plugins.Keyboard.disableScroll(true);
+
+        window.addEventListener('native.keyboardshow', function (e) {
+          let app = document.getElementById('messageWindow');
+          app.style.height = (window.screen.availHeight - e.keyboardHeight) + 'px';
+        });
+
+        window.addEventListener('native.keyboardhide', function (e) {
+          let app = document.getElementById('messageWindow');
+          app.style.height = '100%';
+        });
+      }
+
       // define channel names and server events
       const channelName = 'anonymous_chat';
       const userIsTypingEvent = 'user_typing';
